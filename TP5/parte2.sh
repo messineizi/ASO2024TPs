@@ -1,24 +1,19 @@
 #! /bin/bash
+
+echo "Ingrese su ciudad: "
+read CIUDAD
+
 API_KEY="d55640c8bb4a4bd7a1a21657242406"
 
-if [ -z "$1" ]; then
-    echo "Uso: $0 NOMBRE_DE_LA_CIUDAD"
-    exit 1
-fi
+URL="http://api.weatherapi.com/v1/current.json?key=${API_KEY}&q=${CIUDAD}" 
 
-CIUDAD="$1"
+json=$(wget -qO- "$URL") 
 
-BASE_URL="http://api.weatherapi.com/v1/current.json?key=${API_KEY}&q=${CIUDAD}"
+temp_c=$(echo "$json" | jq -r '.current.temp_c') 
 
-response=$(curl -s "${BASE_URL}")
 
-if [ -z $"response" ]; then
-    echo "Error al conectarse a la API."
-    exit 1
-fi
+echo "Clima en ${CIUDAD}:"
 
-CLIMA=$(echo "$response" | jq '.current.condition.text'
-TEMPERATURA=$(echo "$response" | jq '.current.temp_c')
+echo
 
-echo "Clima actual en $CIUDAD es: $CLIMA"
-echo "Temperatura: $TEMPERATURA °C"
+echo "Temperatura: ${temp_c} °C"
